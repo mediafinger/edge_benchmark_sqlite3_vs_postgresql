@@ -107,6 +107,7 @@ GEM
     bcrypt_pbkdf (1.1.1-arm64-darwin)
     bcrypt_pbkdf (1.1.1-x86_64-darwin)
     benchmark (0.3.0)
+    benchmark-ips (2.14.0)
     bigdecimal (3.1.8)
     bindex (0.8.1)
     brakeman (6.2.1)
@@ -354,6 +355,7 @@ PLATFORMS
 DEPENDENCIES
   bcrypt (~> 3.1.7)
   benchmark
+  benchmark-ips
   brakeman
   bundler-audit (~> 0.9)
   importmap-rails

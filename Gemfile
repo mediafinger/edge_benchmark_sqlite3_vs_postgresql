@@ -18,6 +18,7 @@ gem "turbo-rails" # Hotwire's SPA-like page accelerator [https://turbo.hotwired.
 
 group :development, :test do
   gem "benchmark" # as it won't be a default gem in Ruby 3.5
+  gem "benchmark-ips" # to display iterations per second
   gem "brakeman", require: false # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "bundler-audit", "~> 0.9"
   gem "rspec-rails" # Use RSpec for testing [https://rspec.info/]
