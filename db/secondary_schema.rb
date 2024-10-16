@@ -10,8 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 0) do
+ActiveRecord::Schema[8.0].define(version: 2024_10_16_084333) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  create_table "pg_comments", force: :cascade do |t|
+    t.string "name"
+    t.text "body"
+    t.boolean "active"
+    t.integer "pg_stuff_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "pg_reactions", force: :cascade do |t|
+    t.string "body"
+    t.integer "pg_comment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "pg_stuffs", force: :cascade do |t|
+    t.string "name"
+    t.text "body"
+    t.boolean "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 end

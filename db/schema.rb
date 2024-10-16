@@ -10,5 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 0) do
+ActiveRecord::Schema[8.0].define(version: 2024_10_16_084350) do
+  create_table "comments", force: :cascade do |t|
+    t.string "name"
+    t.text "body"
+    t.boolean "active"
+    t.integer "lite_stuff_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "lite_stuffs", force: :cascade do |t|
+    t.string "name"
+    t.text "body"
+    t.boolean "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "reactions", force: :cascade do |t|
+    t.string "body"
+    t.integer "comment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 end
