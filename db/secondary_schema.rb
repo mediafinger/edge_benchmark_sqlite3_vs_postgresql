@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_10_16_084333) do
+ActiveRecord::Schema[8.0].define(version: 2024_10_18_205626) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_10_16_084333) do
     t.integer "pg_stuff_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["pg_stuff_id"], name: "index_pg_comments_on_pg_stuff_id"
   end
 
   create_table "pg_reactions", force: :cascade do |t|
@@ -28,6 +29,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_10_16_084333) do
     t.integer "pg_comment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["pg_comment_id"], name: "index_pg_reactions_on_pg_comment_id"
   end
 
   create_table "pg_stuffs", force: :cascade do |t|
