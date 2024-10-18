@@ -8,8 +8,8 @@ require "benchmark/ips"
 #
 # Adapt the limits to test with more queries
 #
-@stuff_limit = 20
-@comment_limit = 10
+@stuff_limit = 200
+@comment_limit = 500
 @reactions_limit = 3
 
 def sqlite
