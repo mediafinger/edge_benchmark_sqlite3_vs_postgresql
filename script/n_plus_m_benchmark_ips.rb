@@ -1,6 +1,6 @@
 require_relative "../config/environment"
 
-require "benchmark"
+require "benchmark/ips"
 
 # NOTE: we expect a freshly seeded database with millions of records
 #
@@ -32,7 +32,15 @@ def postgres
   end
 end
 
-Benchmark.bm do |x|
-  x.report('postgres:') { postgres }
-  x.report('sqlite:') { sqlite }
+Benchmark.ips do |x|
+  # Configure the number of seconds used during
+  # the warmup phase (default 2) and calculation phase (default 5)
+  x.config(warmup: 2, time: 5)
+
+  # Typical mode, runs the block as many times as it can
+  x.report("postgres:") { postgres }
+  x.report("sqlite:") { sqlite }
+
+  # Compare the iterations per second of the various reports!
+  x.compare!
 end

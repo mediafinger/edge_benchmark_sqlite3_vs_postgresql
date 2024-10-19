@@ -15,18 +15,18 @@
 * `bin/rails db:migrate`
 * `bin/rails db:seeds` _(maybe adjust the amount first, the seeds run rather slow)_
 
-## Benchmark
+## Benchmarks
 
-Both benchmarks run the same code - which does lots of N+M queries - but format the output differntly:
+Both benchmarks run the same setup with the same DB data.
 
-* `bundle exec ruby script/benchmark.rb`
-* `bundle exec ruby script/benchmark_ips.rb`
+* `bundle exec ruby script/n_plus_m_benchmark_ips.rb` - runs N+M queries
+* `bundle exec ruby script/single_queries_benchmark_ips.rb` - runs many small queries
 
-### Results 2024-10-16
+### Setup
 
 * MacBook Air M2
 * macOS
-* PostgreSQL v16
+* PostgreSQL v16 - _now configured to use the Unix socket, instead of the TCP socket default_
 * SQLite 3.46.1
 
 Both databases had:
@@ -34,6 +34,8 @@ Both databases had:
 * over 350 "Stuff" entries
 * each had 12_000 "Comment" entries
 * each had 5 "Reaction" entries
+
+### N+M queries benchmark results 2024-10-16 - WARNING: _without indices_
 
 Benchmark settings:
 
@@ -43,20 +45,10 @@ Benchmark settings:
 @reactions_limit = 3
 ```
 
-Result: _script/benchmark.rb_
+Result: _script/n_plus_m_benchmark_ips.rb_
 
 ```log
-$> bundle exec ruby script/benchmark.rb
-
-           user       system     total     real
-postgres:  0.737008   0.161267   0.898275  (270.334925)
-sqlite:    5.057899   0.094649   5.152548  (  5.480717)
-```
-
-Result: _script/benchmark_ips.rb_
-
-```log
-$> bundle exec ruby script/benchmark_ips.rb
+$> bundle exec ruby script/n_plus_m_benchmark_ips.rb
 
 ruby 3.3.5 (2024-09-03 revision ef084cc8f4) [arm64-darwin23]
 Warming up --------------------------------------
@@ -73,44 +65,22 @@ Comparison:
 
 Run it multiple times as I could not believe _how large_ the difference is. **See below why that is.**
 
-
 ### Results 2024-10-19 with indices on the foreign keys
+
+Same N+M queries benchmark as above.
 
 > @rickychilcott pointed out that running this benchmark without indices on the foreign keys makes it rather unrealistic. Though, I only planned on doing a "stupid simple" benchmark, I thought he was right. And I am delighted about the results and feel a bit ashamed sharing the index-less version before.
 
-* MacBook Air M2
-* macOS
-* PostgreSQL v16 - _now configured to use the Unix socket, instead of the TCP socket default_
-* SQLite 3.46.1
-
-Both databases had:
-
-* over 350 "Stuff" entries
-* each had 12_000 "Comment" entries
-* each had 5 "Reaction" entries
-
-Result: _script/benchmark.rb_ - with same settings as above
-
-```log
-$> bundle exec ruby script/benchmark.rb
-
-           user       system     total     real
-postgres:  0.322120   0.054180   0.376300  (0.511282)
-sqlite:    0.125275   0.005376   0.130651  (0.149698)
-```
-
 _Adapted_ Benchmark settings:
 
-```
-@stuff_limit = 200 _(10x)_
-@comment_limit = 500 _(50x)_
-@reactions_limit = 3 _(same)_
-```
+* @stuff_limit = 200 _(10x)_
+* @comment_limit = 500 _(50x)_
+* @reactions_limit = 3 _(same)_
 
-Result: _script/benchmark_ips.rb_
+Result: _script/n_plus_m_benchmark_ips.rb_
 
 ```log
-$> bundle exec ruby script/benchmark_ips.rb
+$> bundle exec ruby script/n_plus_m_benchmark_ips.rb
 
 ruby 3.3.5 (2024-09-03 revision ef084cc8f4) [arm64-darwin23]
 Warming up --------------------------------------
@@ -128,3 +98,23 @@ Comparison:
 **That does not look as bad as the first very naive benchmark.**
 
 Using the original bennchmark settings (but with indices) the difference was even smaller (only 1.54x slower).
+
+### Many small queries benchmark results 2024-10-20
+
+Result: _script/single_queries_benchmark_ips.rb_
+
+```log
+$> bundle exec ruby script/single_queries_benchmark_ips.rb
+
+ruby 3.3.5 (2024-09-03 revision ef084cc8f4) [arm64-darwin23]
+Warming up --------------------------------------
+             sqlite:     1.000 i/100ms
+           postgres:     1.000 i/100ms
+Calculating -------------------------------------
+             sqlite:      1.373 (± 0.0%) i/s  (728.42 ms/i) -      7.000 in   5.103646s
+           postgres:      0.872 (± 0.0%) i/s     (1.15 s/i) -      5.000 in   5.734892s
+
+Comparison:
+             sqlite::        1.4 i/s
+           postgres::        0.9 i/s - 1.57x  slower
+```
